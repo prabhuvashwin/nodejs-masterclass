@@ -33,7 +33,7 @@ httpsServer.listen( config.httpsPort, () => {
 } );
 
 // All the server logic for both http and https server
-const unifiedServer = ( req, res, port ) => {
+const unifiedServer = ( req, res ) => {
   // Get the url and parse it
   const parsedUrl = url.parse( req.url, true );
 
@@ -42,7 +42,7 @@ const unifiedServer = ( req, res, port ) => {
   const { pathname: path, query } = parsedUrl;
   const trimmedPath = path.replace( /^\/+|\/+$/g, "" );
 
-  // Ge tthe HTTP method
+  // Get the HTTP method
   const method = req.method.toLowerCase();
 
   // Get the headers as an object
@@ -60,12 +60,12 @@ const unifiedServer = ( req, res, port ) => {
     buffer += decoder.end();
 
     // Choose the handler this request should go to.
-    // If not handler is matched, then choose notFoundHandler
+    // If no handler is matched, then choose notFound handler
     const chosenHandler = typeof( router[trimmedPath] ) !== "undefined"
                             ? router[trimmedPath]
                             : handlers.notFound;
 
-    // Construct a data object tp send to the handler
+    // Construct a data object to send to the handler
     const data = {
       trimmedPath,
       method,
@@ -95,12 +95,12 @@ const unifiedServer = ( req, res, port ) => {
   } );
 };
 
-// Deifne the handlers
+// Define the handlers
 const handlers = {};
 
 // Ping handler
 handlers.ping = ( data, cb ) => {
-  cb && cb( 200 );
+  cb && cb( 200, data );
 }
 
 // Not found handler

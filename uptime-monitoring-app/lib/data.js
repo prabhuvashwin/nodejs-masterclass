@@ -3,6 +3,7 @@
 // Dependencies
 const fs = require( "fs" );
 const path = require( "path" );
+const parseHelper = require( "../helpers/parse" );
 
 // Container for the module (to be exported)
 const lib = {};
@@ -44,7 +45,14 @@ lib.create = ( dir, file, data, cb ) => {
 
 // Read data from a file
 lib.read = ( dir, file, cb ) => {
-  fs.readFile( `${lib.baseDir}/${dir}/${file}.json`, "utf8", ( err, data ) => cb && cb( err, data ) );
+  fs.readFile( `${lib.baseDir}/${dir}/${file}.json`, "utf8", ( err, data ) => {
+    if ( !err && data ) {
+      const parsedData = parseHelper.parseJSONToObject( data );
+      cb && cb( false, parsedData );
+    } else {
+      cb && cb( err, data )
+    }
+  } );
 };
 
 // Update data inside a file
